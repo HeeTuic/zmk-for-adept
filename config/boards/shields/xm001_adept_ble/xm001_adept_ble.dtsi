@@ -1,0 +1,58 @@
+/*
+ * XM001-Adept_BLE shield
+ *
+ * 6 direct-wired buttons + PMW3610 trackball, single (non-split) wireless board.
+ *
+ * Pin facts are from ProDoc_sensor_3_2026-10-11.epro (PCB netlist); see docs/pinmap.md.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include "physical_layouts.dtsi"
+
+/ {
+	chosen {
+		zmk,kscan = &kscan0;
+		zmk,physical-layout = &xm001_layout;
+	};
+
+	/*
+	 * The six buttons are wired switch-to-ground: no matrix, no diodes.
+	 * Order K1..K6 equals E73 net S1..S6 and the transform order below.
+	 */
+	kscan0: kscan_0 {
+		compatible = "zmk,kscan-gpio-direct";
+		label = "KSCAN";
+
+		input-gpios
+			= <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K1  E73 pad 35 = P0.24 */
+			, <&gpio0 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K2  E73 pad 33 = P0.13 */
+			, <&gpio0 30 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K3  E73 pad 10 = P0.30 */
+			, <&gpio0 28 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K4  E73 pad 4  = P0.28 */
+			, <&gpio0 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K5  E73 pad 3  = P0.03 */
+			, <&gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K6  E73 pad 1  = P1.11 */
+			;
+	};
+
+	default_transform: keymap_transform_0 {
+		compatible = "zmk,matrix-transform";
+		columns = <6>;
+		rows = <1>;
+
+		map = <
+			RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4) RC(0,5)
+		>;
+	};
+
+	/*
+	 * The PMW3610 driver publishes an input device; this listener feeds it
+	 * into ZMK's pointing pipeline.
+	 */
+	trackball_listener {
+		compatible = "zmk,input-listener";
+		device = <&trackball>;
+	};
+};
+
+/* The PMW3610 SPI bus and device live in xm001_adept_ble.overlay. */

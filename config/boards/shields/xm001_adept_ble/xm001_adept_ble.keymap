@@ -1,0 +1,60 @@
+/*
+ * XM001-Adept_BLE default keymap
+ *
+ * 6 buttons + 1 trackball.  Layer order matters: the trackball driver is told
+ * which layers mean scroll (2) and snipe (3) in xm001_adept_ble.overlay.
+ *
+ *   layer 0  Buttons   default on power-up, trackball moves the pointer
+ *   layer 1  Lower     F-keys / media
+ *   layer 2  Scroll    trackball scrolls
+ *   layer 3  Snipe     fine pointer movement at reduced CPI
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/mouse.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/pointing.h>
+
+/ {
+	keymap {
+		compatible = "zmk,keymap";
+
+		/* K1..K6 = E73 net S1..S6, indices follow the matrix transform. */
+		buttons_layer: buttons {
+			display-name = "Buttons";
+			bindings = <
+				&kp F13  &kp F14  &kp F15  &kp F16  &kp F17  &kp F18
+			>;
+			sensor-bindings = <&mmv MOVE_Y>;
+		};
+
+		lower_layer: lower {
+			display-name = "Lower";
+			bindings = <
+				&mo 2    &mo 3    &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F18
+			>;
+			sensor-bindings = <&mmv MOVE_Y>;
+		};
+
+		scroll_layer: scroll {
+			display-name = "Scroll";
+			bindings = <
+				&trans   &trans   &kp F15  &kp F16  &kp F17  &kp F18
+			>;
+			sensor-bindings = <&msc SCRL_Y>;
+		};
+
+		snipe_layer: snipe {
+			display-name = "Snipe";
+			bindings = <
+				&trans   &trans   &kp F15  &kp F16  &kp F17  &kp F18
+			>;
+			/* Snipe CPI comes from CONFIG_PMW3610_SNIPE_CPI. */
+			sensor-bindings = <&mmv MOVE_Y>;
+		};
+	};
+};

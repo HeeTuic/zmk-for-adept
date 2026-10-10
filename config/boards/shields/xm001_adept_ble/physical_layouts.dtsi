@@ -1,0 +1,33 @@
+/*
+ * Physical layout for XM001-Adept_BLE.
+ *
+ * X/Y are taken from the PCB footprint origins (1/100 mil, rounded); they
+ * only need to be relatively correct — ZMK Studio and keymap-drawer use them
+ * for display.
+ *
+ * The trackball sits in the middle of the board (PCB x ~1435, y ~1437).
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/ {
+	xm001_layout: xm001_layout {
+		compatible = "zmk,physical-layout";
+		display-name = "XM001-Adept BLE";
+
+		keys  //                     w   h    x    y   rot  rx  ry
+			= <&key_physical_attrs 100 100  582  284    0   0   0>   /* K1  S1 */
+			, <&key_physical_attrs 100 100  621  106    0   0   0>   /* K2  S2 */
+			, <&key_physical_attrs 100 100 1088  285    0   0   0>   /* K3  S3 */
+			, <&key_physical_attrs 100 100 1090  250    0   0   0>   /* K4  S4 */
+			, <&key_physical_attrs 100 100 2195  250    0   0   0>   /* K5  S5 */
+			, <&key_physical_attrs 100 100 2702  281    0   0   0>   /* K6  S6 */
+			;
+	};
+
+	/* Retained so the shield also works on ZMK revisions that still select a
+	 * matrix transform by name rather than through the physical layout. */
+	chosen {
+		zmk,physical-layout = &xm001_layout;
+	};
+};

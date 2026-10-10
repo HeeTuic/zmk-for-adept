@@ -1,0 +1,30 @@
+# XM001-Adept BLE board configuration
+# SPDX-License-Identifier: MIT
+
+if BOARD_XM001_ADEPT_BLE
+
+config BOARD
+	default "xm001_adept_ble"
+
+# nRF52833-QIAA: 512 KB flash, 128 KB RAM.
+config FLASH_SIZE
+	default 512
+
+config SRAM_SIZE
+	default 128
+
+if USB_DEVICE_STACK
+
+config USB_NRFX
+	default y
+
+endif # USB_DEVICE_STACK
+
+config BT_CTLR
+	default BT
+
+# The E73 module wires the nRF52833 DC/DC regulator pins (pads 23 / 25).
+config BOARD_ENABLE_DCDC
+	default y
+
+endif # BOARD_XM001_ADEPT_BLE

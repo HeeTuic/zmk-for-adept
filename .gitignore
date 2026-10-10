@@ -1,0 +1,24 @@
+# Build output
+build/
+*.uf2
+*.hex
+*.elf
+*.bin
+*.map
+
+# West / Zephyr workspace artefacts
+.west/
+zephyr/modules/
+modules/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+*~
+*.bak
+*.tmp
+
+# Local notes that should not be published
+*.local.md
