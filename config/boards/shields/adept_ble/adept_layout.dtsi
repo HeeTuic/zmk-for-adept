@@ -7,6 +7,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include <physical_layouts.dtsi>
+
 / {
 	adept_layout: adept_layout {
 		compatible = "zmk,physical-layout";
