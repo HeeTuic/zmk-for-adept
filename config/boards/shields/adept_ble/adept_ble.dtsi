@@ -19,7 +19,6 @@
 	 * Order K1..K6 matches the matrix transform below. */
 	kscan0: kscan_0 {
 		compatible = "zmk,kscan-gpio-direct";
-		label = "KSCAN";
 
 		input-gpios
 			= <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K1  P0.24 */

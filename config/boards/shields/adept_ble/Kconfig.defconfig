@@ -6,8 +6,4 @@ if SHIELD_ADEPT_BLE
 config ZMK_KEYBOARD_NAME
 	default "Adept BLE"
 
-# VBAT is read through the 820K / 2M divider on E73 pad 18 (P0.04 / AIN2).
-config ZMK_BATTERY_REPORTING
-	default y
-
 endif
