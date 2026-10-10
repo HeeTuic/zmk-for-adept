@@ -18,13 +18,13 @@
 	keymap {
 		compatible = "zmk,keymap";
 
-		/* K1..K6 = E73 net S1..S6, indices follow the matrix transform. */
+		/* K1..K6 match the matrix transform order. */
 		buttons_layer: buttons {
 			display-name = "Buttons";
 			bindings = <
 				&kp F13  &kp F14  &kp F15  &kp F16  &kp F17  &kp F18
 			>;
-			sensor-bindings = <&mmv MOVE_Y>;
+			sensor-bindings = <&mmv MOVE_UP>;
 		};
 
 		lower_layer: lower {
@@ -32,7 +32,7 @@
 			bindings = <
 				&mo 2    &mo 3    &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F18
 			>;
-			sensor-bindings = <&mmv MOVE_Y>;
+			sensor-bindings = <&mmv MOVE_UP>;
 		};
 
 		scroll_layer: scroll {
@@ -40,7 +40,7 @@
 			bindings = <
 				&trans   &trans   &kp F15  &kp F16  &kp F17  &kp F18
 			>;
-			sensor-bindings = <&msc SCRL_Y>;
+			sensor-bindings = <&msc SCRL_UP>;
 		};
 
 		snipe_layer: snipe {
@@ -48,8 +48,7 @@
 			bindings = <
 				&trans   &trans   &kp F15  &kp F16  &kp F17  &kp F18
 			>;
-			/* Snipe CPI comes from CONFIG_PMW3610_SNIPE_CPI. */
-			sensor-bindings = <&mmv MOVE_Y>;
+			sensor-bindings = <&mmv MOVE_UP>;
 		};
 	};
 };
