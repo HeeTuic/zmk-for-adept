@@ -1,13 +1,8 @@
 /*
- * XM001-Adept_BLE default keymap
+ * Adept BLE default keymap
  *
- * 6 buttons + 1 trackball.  Layer order matters: the trackball driver is told
- * which layers mean scroll (2) and snipe (3) in xm001_adept_ble.overlay.
- *
- *   layer 0  Buttons   default on power-up, trackball moves the pointer
- *   layer 1  Lower     F-keys / media
- *   layer 2  Scroll    trackball scrolls
- *   layer 3  Snipe     fine pointer movement at reduced CPI
+ * The trackball driver is told in adept_ble.overlay which layers mean scroll
+ * (2) and snipe (3), so the layer order below is significant.
  *
  * SPDX-License-Identifier: MIT
  */

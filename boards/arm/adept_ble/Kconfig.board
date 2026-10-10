@@ -1,0 +1,6 @@
+# Adept BLE board (EBYTE E73-2G4M08S1C / nRF52833)
+# SPDX-License-Identifier: MIT
+
+config BOARD_ADEPT_BLE
+	bool "Adept BLE (EBYTE E73-2G4M08S1C / nRF52833)"
+	select SOC_NRF52833_QIAA

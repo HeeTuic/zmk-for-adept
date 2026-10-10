@@ -2,14 +2,12 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    # PMW3610 driver.  This is the same fork the working charybdis board uses.
     - name: DoctorWangWang
       url-base: https://github.com/DoctorWangWang
 
   projects:
     - name: zmk
       remote: zmkfirmware
-      # Latest stable ZMK release.
       revision: v0.3.0
       import: app/west.yml
 

@@ -1,0 +1,5 @@
+# Adept BLE shield
+# SPDX-License-Identifier: MIT
+
+config SHIELD_ADEPT_BLE
+	def_bool $(shields_list_contains,adept_ble)

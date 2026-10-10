@@ -1,0 +1,48 @@
+/*
+ * Adept BLE
+ *
+ * 6 direct-wired buttons and a PMW3610 trackball on a single wireless board.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include "physical_layouts.dtsi"
+
+/ {
+	chosen {
+		zmk,kscan = &kscan0;
+		zmk,physical-layout = &adept_layout;
+	};
+
+	/* Buttons wire switch-to-ground, so a direct GPIO kscan is used.
+	 * Order K1..K6 matches the matrix transform below. */
+	kscan0: kscan_0 {
+		compatible = "zmk,kscan-gpio-direct";
+		label = "KSCAN";
+
+		input-gpios
+			= <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K1  P0.24 */
+			, <&gpio0 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K2  P0.13 */
+			, <&gpio0 30 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K3  P0.30 */
+			, <&gpio0 28 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K4  P0.28 */
+			, <&gpio0 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K5  P0.03 */
+			, <&gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K6  P1.11 */
+			;
+	};
+
+	default_transform: keymap_transform_0 {
+		compatible = "zmk,matrix-transform";
+		columns = <6>;
+		rows = <1>;
+
+		map = <
+			RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4) RC(0,5)
+		>;
+	};
+
+	trackball_listener {
+		compatible = "zmk,input-listener";
+		device = <&trackball>;
+	};
+};

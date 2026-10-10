@@ -1,9 +1,9 @@
 file_format: "1"
-id: xm001_adept_ble
-name: XM001-Adept BLE
+id: adept_ble
+name: Adept BLE
 type: shield
 url: https://github.com/HeeTuic/zmk-for-adept
-requires: [xm001_adept_ble]
+requires: [adept_ble]
 features:
   - keys
   - pointer

@@ -1,22 +1,13 @@
 /*
- * XM001-Adept_BLE overlay: PMW3610 trackball bus and device.
+ * Adept BLE: PMW3610 trackball bus and device.
  *
- * Net trace (PCB netlist -> E73 pad -> nRF pin):
- *   SCLK   sensor pad 3 -> E73 pad 9 -> P0.31
- *   SDIO   sensor pad 2 -> E73 pad 8 -> P0.29   (the "MOSI" net)
- *   MOTION sensor pad 8 -> E73 pad 7 -> P0.02   (the "MISO" net, used as IRQ)
- *   NCS    sensor pad 5 -> E73 pad 6 -> P1.13
- *
- * The PMW3610 has ONE bidirectional data pin (SDIO, pad 2); pad 8 is the
- * MOTION interrupt output.  So the SPI controller must shift data in and out
- * on the same pin: MOSI and MISO are both set to P0.29, exactly like the
- * working charybdis board (there MOSI and MISO are both P0.17).  P0.02
- * carries MOTION as the data-ready interrupt.
+ * SCLK P0.31, CS P1.13, MOTION (interrupt) P0.02.  The sensor has a single
+ * bidirectional data pin, so SPI MOSI and MISO both use P0.29.
  *
  * SPDX-License-Identifier: MIT
  */
 
-#include "xm001_adept_ble.dtsi"
+#include "adept_ble.dtsi"
 
 &pinctrl {
 	spi1_default: spi1_default {
@@ -53,7 +44,7 @@
 		spi-max-frequency = <2000000>;
 		irq-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 
-		/* Layer indices into the keymap: 2 = scroll, 3 = snipe. */
+		/* Keymap layers: 2 = scroll, 3 = snipe. */
 		scroll-layers = <2>;
 		snipe-layers = <3>;
 	};

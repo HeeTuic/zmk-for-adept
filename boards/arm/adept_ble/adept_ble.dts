@@ -1,23 +1,18 @@
 /*
- * XM001-Adept BLE board
+ * Adept BLE board
  *
- * MCU module : EBYTE E73-2G4M08S1C  (nRF52833-QIAA aQFN73, 512 KB flash / 128 KB RAM)
- * Project    : XM001-Adept_BLE  (MIAOMIAO wuxian v1.3, PMW3610 trackball)
- *
- * Every GPIO was read out of ProDoc_sensor_3_2026-10-11.epro (PCB netlist) and
- * cross-checked against the Ebyte pin table plus two independent symbols.
- * See docs/pinmap.md.
+ * MCU module: EBYTE E73-2G4M08S1C (nRF52833-QIAA, 512 KB flash / 128 KB RAM)
  *
  * SPDX-License-Identifier: MIT
  */
 
 /dts-v1/;
 #include <nordic/nrf52833_qiaa.dtsi>
-#include "xm001_adept_ble-pinctrl.dtsi"
+#include "adept_ble-pinctrl.dtsi"
 
 / {
-	model = "XM001-Adept BLE";
-	compatible = "xm001,adept-ble";
+	model = "Adept BLE";
+	compatible = "adept,ble";
 
 	chosen {
 		zephyr,code-partition = &code_partition;
@@ -35,16 +30,7 @@
 		};
 	};
 
-	/*
-	 * NOTE: no VBUS-sense node here on purpose.  This board has no VBUS
-	 * divider.  The only node that reacts to USB presence is AO3407 (Q1), a
-	 * battery power-path switch whose gate sits on E73 pad 14 = P0.06, and
-	 * the VBUS net reaches nothing but the E73 VBUS pin (pad 27) plus the
-	 * charger and fuse.  P0.06 is therefore reserved.
-	 */
-
-	/* VBAT divider: R10 = 820K high side, R11 = 2M low side, on E73 pad 18
-	 * (AI2 = AIN2 = P0.04). */
+	/* VBAT divider: 820K high side, 2M low side, on E73 pad 18 (P0.04 / AIN2). */
 	vbatt: vbatt {
 		compatible = "zmk,battery-voltage-divider";
 		io-channels = <&adc 2>;
@@ -97,11 +83,7 @@ zephyr_udc0: &usbd {
 };
 
 &flash0 {
-	/*
-	 * Adafruit nRF52 UF2 bootloader layout, same offsets ZMK uses for
-	 * nice_nano_v2: bootloader below 0x27000, application 0x27000, storage
-	 * at the top of the 512 KB flash.
-	 */
+	/* Adafruit nRF52 UF2 bootloader layout (same offsets as nice_nano_v2). */
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
@@ -113,12 +95,8 @@ zephyr_udc0: &usbd {
 		code_partition: partition@27000 {
 			reg = <0x00027000 0x000c5000>;
 		};
-
-		/*
-		 * 0x000EC000 .. 0x000F3FFF is reserved for the application.
-		 */
-		storage_partition: partition@f4000 {
-			reg = <0x000f4000 0x0000c000>;
+		storage_partition: partition@ec000 {
+			reg = <0x000ec000 0x00014000>;
 		};
 	};
 };

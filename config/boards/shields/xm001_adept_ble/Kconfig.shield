@@ -1,5 +1,0 @@
-# XM001-Adept_BLE shield
-# SPDX-License-Identifier: MIT
-
-config SHIELD_XM001_ADEPT_BLE
-	def_bool $(shields_list_contains,xm001_adept_ble)

@@ -1,10 +1,10 @@
-# XM001-Adept BLE board configuration
+# Adept BLE board configuration
 # SPDX-License-Identifier: MIT
 
-if BOARD_XM001_ADEPT_BLE
+if BOARD_ADEPT_BLE
 
 config BOARD
-	default "xm001_adept_ble"
+	default "adept_ble"
 
 # nRF52833-QIAA: 512 KB flash, 128 KB RAM.
 config FLASH_SIZE
@@ -27,4 +27,4 @@ config BT_CTLR
 config BOARD_ENABLE_DCDC
 	default y
 
-endif # BOARD_XM001_ADEPT_BLE
+endif # BOARD_ADEPT_BLE

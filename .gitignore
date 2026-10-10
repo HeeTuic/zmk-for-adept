@@ -1,15 +1,10 @@
 # Build output
 build/
-*.uf2
-*.hex
-*.elf
-*.bin
-*.map
 
-# West / Zephyr workspace artefacts
+# West / Zephyr
 .west/
-zephyr/modules/
 modules/
+zephyr/modules/
 
 # Editors / OS
 .vscode/
@@ -19,6 +14,3 @@ desktop.ini
 *~
 *.bak
 *.tmp
-
-# Local notes that should not be published
-*.local.md

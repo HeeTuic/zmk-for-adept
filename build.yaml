@@ -1,9 +1,7 @@
 # This file generates the GitHub Actions matrix.
 #
-# One board + one shield: XM001-Adept BLE is a single (non-split) wireless board.
-#
 ---
 include:
-  - board: xm001_adept_ble
-    shield: xm001_adept_ble
-    artifact-name: xm001_adept_ble
+  - board: adept_ble
+    shield: adept_ble
+    artifact-name: adept_ble
