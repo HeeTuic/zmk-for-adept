@@ -83,7 +83,11 @@ zephyr_udc0: &usbd {
 };
 
 &flash0 {
-	/* Adafruit nRF52 UF2 bootloader layout (same offsets as nice_nano_v2). */
+	/*
+	 * Adafruit nRF52 UF2 bootloader layout: the bootloader plus the S140
+	 * SoftDevice occupy flash below 0x26000, so the application must be
+	 * linked at 0x26000.  Storage sits at the top of the 512 KB flash.
+	 */
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
@@ -92,8 +96,8 @@ zephyr_udc0: &usbd {
 		sd_partition: partition@0 {
 			reg = <0x00000000 0x00026000>;
 		};
-		code_partition: partition@27000 {
-			reg = <0x00027000 0x000c5000>;
+		code_partition: partition@26000 {
+			reg = <0x00026000 0x000c6000>;
 		};
 		storage_partition: partition@ec000 {
 			reg = <0x000ec000 0x00014000>;

@@ -1,10 +1,15 @@
 # Build output
 build/
 
-# West / Zephyr
-.west/
-modules/
-zephyr/modules/
+# West workspace created by a local `west init` / `west update`.
+# The repo's own zephyr/module.yml is tracked; only the pulled trees are ignored.
+/.west/
+/zmk/
+/zephyr/
+!zephyr/module.yml
+/modules/
+/zmk-pmw3610-driver/
+/twister-out*/
 
 # Editors / OS
 .vscode/
