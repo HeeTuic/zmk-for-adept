@@ -23,8 +23,4 @@ endif # USB_DEVICE_STACK
 config BT_CTLR
 	default BT
 
-# The E73 module wires the nRF52833 DC/DC regulator pins (pads 23 / 25).
-config BOARD_ENABLE_DCDC
-	default y
-
 endif # BOARD_ADEPT_BLE
