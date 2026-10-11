@@ -16,6 +16,12 @@ CONFIG_GPIO=y
 CONFIG_USE_DT_CODE_PARTITION=y
 CONFIG_BUILD_OUTPUT_UF2=y
 
+# The Adafruit nRF52 bootloader on this board only accepts its own UF2 family
+# id.  Zephyr derives a hash from the board name for nRF52833, which the
+# bootloader rejects, so pin it to the Adafruit nRF52840 family id that the
+# bootloader (and every working ZMK build for these modules) uses.
+CONFIG_BUILD_OUTPUT_UF2_FAMILY_ID="0xADA52840"
+
 CONFIG_MPU_ALLOW_FLASH_WRITE=y
 CONFIG_NVS=y
 CONFIG_SETTINGS_NVS=y
