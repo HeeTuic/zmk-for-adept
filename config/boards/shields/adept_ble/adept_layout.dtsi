@@ -1,8 +1,17 @@
 /*
- * Physical layout for Adept BLE.
+ * Adept BLE 物理布局
  *
- * X/Y come from the PCB footprint origins (1/100 mil, rounded) and only need
- * to be relatively correct; they are used for display.
+ * 作用：给 Studio 与画键位图工具一个“按键在板子上的位置”描述。
+ * 不影响按键功能，错了也只是显示位置不准。
+ *
+ * 坐标单位 1/100 英寸（mil 的 1/10），X 向右、Y 向下，
+ * 数值取自 PCB 元件坐标，只保证相对关系正确。
+ *
+ * 必须 #include <physical_layouts.dtsi>（尖括号 = 取 ZMK 官方那份），
+ * 因为 &key_physical_attrs 这个标签由官方定义。若在 shield 目录下放一个
+ * 同名文件，引号 include 会优先命中本地文件而顶掉官方定义，解析就会失败。
+ *
+ * 每项 7 个参数：宽 高 X Y 旋转 旋转中心X 旋转中心Y
  *
  * SPDX-License-Identifier: MIT
  */

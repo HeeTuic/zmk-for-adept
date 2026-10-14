@@ -1,9 +1,11 @@
 file_format: "1"
+# 硬件元数据：ZMK 用它做硬件校验与文档生成，不参与固件逻辑。
 id: adept_ble
 name: Adept BLE
 type: shield
 url: https://github.com/HeeTuic/zmk-for-adept
+# 本 shield 依赖的板级定义（同仓库 boards/arm/adept_ble）
 requires: [adept_ble]
 features:
-  - keys
-  - pointer
+  - keys      # 有按键
+  - pointer   # 有指针设备（轨迹球）

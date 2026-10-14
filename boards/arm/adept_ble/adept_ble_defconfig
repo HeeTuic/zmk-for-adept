@@ -1,26 +1,45 @@
-# Adept BLE board defaults (EBYTE E73 module, nRF52840)
+# Adept BLE 板级默认配置（EBYTE E73 模块 / nRF52840）
 # SPDX-License-Identifier: MIT
+#
+# 本文件由 Zephyr 在配置阶段最先加载，用来固定“这颗主控是什么”。
+# 之后才会合并 config/ 下的应用配置，所以这里只放不可变的板级事实，
+# 不放按键、轨迹球等与键盘行为相关的东西。
 
+# --- SoC 与板级标识 --------------------------------------------------------
+# nRF52840 QIAA 封装（aQFN73）：1 MB Flash / 256 KB RAM。
+# 注意：E73 模块的型号丝印与内部晶圆型号可能不一致，本仓库按实测确认的
+# nRF52840 配置，而不是按模块型号名推断。
 CONFIG_SOC_SERIES_NRF52X=y
 CONFIG_SOC_NRF52840_QIAA=y
 CONFIG_BOARD_ADEPT_BLE=y
 
-# Enable MPU
+# --- 内核与引脚控制 --------------------------------------------------------
+# ARM MPU：ZMK 需要它来做内存保护。
 CONFIG_ARM_MPU=y
 
+# pinctrl：nRF 的 SPI/UART 引脚都通过 pinctrl 节点描述
+# （见 adept_ble-pinctrl.dtsi），必须开启。
 CONFIG_PINCTRL=y
 
-# enable GPIO
+# GPIO 子系统，按键扫描与片选都依赖它。
 CONFIG_GPIO=y
 
+# --- 固件输出与 Flash 布局 -------------------------------------------------
+# 使用设备树里声明的 code_partition 作为应用区起点/大小
+# （见 adept_ble.dts 的 &flash0）。关掉它应用就会被链接到 SoC 默认地址，
+# 那正是之前“烧进去不启动”的原因。
 CONFIG_USE_DT_CODE_PARTITION=y
+
+# 输出 UF2，供 nRF52 bootloader 的 U 盘方式刷写。
 CONFIG_BUILD_OUTPUT_UF2=y
 
-# The Adafruit nRF52 bootloader on this board only accepts its own UF2 family
-# id, so pin it to the Adafruit nRF52840 value rather than letting Zephyr
-# derive one from the board name.
+# UF2 family id：必须与板上 bootloader 认的一致。
+# 板上跑的是 Adafruit nRF52 bootloader（自报 Board-ID nRF52840-pca10056-v1），
+# 它只接受 0xADA52840。若不显式指定，Zephyr 会按板名算出一个哈希值，
+# bootloader 会直接拒收文件（表现为：文件拖进去不消失、设备留在 DFU）。
 CONFIG_BUILD_OUTPUT_UF2_FAMILY_ID="0xADA52840"
 
+# --- Flash 操作与设置存储 --------------------------------------------------
 CONFIG_MPU_ALLOW_FLASH_WRITE=y
 CONFIG_NVS=y
 CONFIG_SETTINGS_NVS=y
@@ -28,9 +47,13 @@ CONFIG_FLASH=y
 CONFIG_FLASH_PAGE_LAYOUT=y
 CONFIG_FLASH_MAP=y
 
-# 32.768 kHz crystal X1 is fitted on the module (E73 pads 11 / 13).
+# --- 低频时钟 --------------------------------------------------------------
+# 模块上已贴 32.768 kHz 晶振（E73 第 11 / 13 脚）。
+# 用晶振而不是内部 RC，蓝牙休眠时的功耗和计时精度都更好。
 CONFIG_CLOCK_CONTROL_NRF=y
 CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
 
+# --- 输出方式 --------------------------------------------------------------
+# 蓝牙 + USB 双模；USB 同时承担 ZMK Studio 的串口通道。
 CONFIG_ZMK_USB=y
 CONFIG_ZMK_BLE=y

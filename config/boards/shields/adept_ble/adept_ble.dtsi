@@ -1,7 +1,12 @@
 /*
- * Adept BLE
+ * Adept BLE shield：键盘本体定义
  *
- * 6 direct-wired buttons and a PMW3610 trackball on a single wireless board.
+ * 分工：
+ *   本文件             按键扫描（kscan）与键位映射（transform）等结构
+ *   adept_layout.dtsi  物理布局坐标（Studio / 画键位图用）
+ *   adept_ble.overlay  轨迹球 SPI 设备
+ *   adept_ble.keymap   各层键位
+ *   adept_ble.conf     驱动与功能开关（Kconfig）
  *
  * SPDX-License-Identifier: MIT
  */
@@ -11,12 +16,26 @@
 
 / {
 	chosen {
+		/* 按键数据来自哪个扫描设备 */
 		zmk,kscan = &kscan0;
+		/* 使用哪个物理布局（Studio 显示用） */
 		zmk,physical-layout = &adept_layout;
 	};
 
-	/* Buttons wire switch-to-ground, so a direct GPIO kscan is used.
-	 * Order K1..K6 matches the matrix transform below. */
+	/*
+	 * 按键扫描：6 个按键直接接 IO，没有矩阵、没有二极管。
+	 * 每个按键一端接 MCU 引脚、另一端接 GND，所以：
+	 *   GPIO_ACTIVE_LOW  —— 按下时被拉到低电平，按“低有效”处理
+	 *   GPIO_PULL_UP     —— 未按时靠内部上拉维持高电平，避免悬空误触发
+	 *
+	 * 下面顺序（K1..K6）必须与 matrix_transform 的 RC 顺序、
+	 * 以及 keymap 里每层的绑定顺序一致，三者对不上就会错键。
+	 *
+	 * 引脚来源（E73 焊盘 -> nRF 引脚）：
+	 *   K1 焊盘 35 -> P0.24    K4 焊盘 4  -> P0.28
+	 *   K2 焊盘 33 -> P0.13    K5 焊盘 3  -> P0.03
+	 *   K3 焊盘 10 -> P0.30    K6 焊盘 1  -> P1.11
+	 */
 	kscan0: kscan_0 {
 		compatible = "zmk,kscan-gpio-direct";
 
@@ -30,6 +49,11 @@
 			;
 	};
 
+	/*
+	 * 键位映射表：把“扫描到的物理位置”映射成“第几个键”。
+	 * 6 个按键所以是 6 列的虚拟矩阵，行数为 1。
+	 * 条目数（6）必须等于 keymap 每层的绑定数（6）。
+	 */
 	default_transform: keymap_transform_0 {
 		compatible = "zmk,matrix-transform";
 		columns = <6>;
@@ -40,12 +64,18 @@
 		>;
 	};
 
+	/*
+	 * 轨迹球数据入口：PMW3610 驱动上报标准 input 事件，
+	 * 由 input-listener 接进 ZMK 的指针处理流程，
+	 * 最终根据当前激活层决定是移动指针还是滚动。
+	 */
 	trackball_listener {
 		compatible = "zmk,input-listener";
 		device = <&trackball>;
 	};
 };
 
+/* 把 transform 与 kscan 关联到物理布局节点上（ZMK 布局体系的要求） */
 &adept_layout {
 	transform = <&default_transform>;
 	kscan = <&kscan0>;

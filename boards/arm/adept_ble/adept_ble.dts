@@ -1,7 +1,11 @@
 /*
- * Adept BLE board
+ * Adept BLE 板级定义（EBYTE E73 模块 / nRF52840）
  *
- * MCU module: EBYTE E73 (nRF52840, 1 MB flash / 256 KB RAM)
+ * 作用：描述“这块板子上有什么”。按键、轨迹球等与键盘行为相关的内容
+ * 放在 config/boards/shields/adept_ble/ 下，不放这里。
+ *
+ * 主控：nRF52840，1 MB Flash / 256 KB RAM。
+ * 引脚来源：ProDoc PCB 工程网表（E73 焊盘号 -> nRF 引脚）。
  *
  * SPDX-License-Identifier: MIT
  */
@@ -12,15 +16,22 @@
 
 / {
 	model = "Adept BLE";
+	/* 厂商前缀 + 板名，Zephyr 用它标识这块板 */
 	compatible = "adept,ble";
 
+	/* chosen 是“给子系统指路”的节点：告诉 Zephyr/ZMK 某个角色该用哪个节点 */
 	chosen {
+		/* 应用区用下面 &flash0 里声明的 code_partition。
+		 * 这条与 CONFIG_USE_DT_CODE_PARTITION=y 配合，决定链接地址。 */
 		zephyr,code-partition = &code_partition;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
+		/* ZMK 的电量来源 */
 		zmk,battery = &vbatt;
 	};
 
+	/* 状态指示灯：蓝灯接在 P1.10，经 1K 电阻到 LED 正极。
+	 * 低电平点亮，所以写 GPIO_ACTIVE_LOW。 */
 	leds {
 		compatible = "gpio-leds";
 
@@ -30,7 +41,11 @@
 		};
 	};
 
-	/* VBAT divider: 820K high side, 2M low side, on E73 pad 18 (P0.04 / AIN2). */
+	/* 电池电压采样：
+	 * PCB 上 R10 = 820K（上分压）、R11 = 2M（下分压），中点接 E73 焊盘 18
+	 * = P0.04 = AIN2。ZMK 会按分压比换算回真实电池电压。
+	 *   output-ohms = 下拉电阻（2M）
+	 *   full-ohms   = 两只电阻之和（2M + 820K），满量程对应多少伏 */
 	vbatt: vbatt {
 		compatible = "zmk,battery-voltage-divider";
 		io-channels = <&adc 2>;
@@ -39,10 +54,14 @@
 	};
 };
 
+/* --- 各外设使能 ---------------------------------------------------------- */
+
+/* ADC：电池采样用 */
 &adc {
 	status = "okay";
 };
 
+/* GPIOTE：nRF 的 GPIO 任务/事件模块，按键中断与轨迹球中断都依赖它 */
 &gpiote {
 	status = "okay";
 };
@@ -55,14 +74,19 @@
 	status = "okay";
 };
 
+/* UICR：把复位脚配置成 GPIO 复位。
+ * 本板复位键接 E73 焊盘 26 = P0.18 = RST。 */
 &uicr {
 	gpio-as-nreset;
 };
 
+/* NFC 功能本板未使用。关掉可以避免 P0.09 / P0.10 被 NFC 占用。 */
 &nfct {
 	status = "disabled";
 };
 
+/* SPI1：轨迹球总线。引脚在 adept_ble-pinctrl.dtsi，
+ * 设备（含片选、中断）在 config/.../adept_ble.overlay 里配置。 */
 &spi1 {
 	compatible = "nordic,nrf-spim";
 	pinctrl-0 = <&spi1_default>;
@@ -70,6 +94,7 @@
 	pinctrl-names = "default", "sleep";
 };
 
+/* UART0：为 ZMK Studio 的串口传输预留；实际通道是 USB CDC ACM。 */
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
@@ -78,29 +103,46 @@
 	pinctrl-names = "default", "sleep";
 };
 
+/* USB 设备控制器。给它一个 label zephyr_udc0，
+ * studio-rpc-usb-uart snippet 会挂在它下面创建 CDC ACM 节点。 */
 zephyr_udc0: &usbd {
 	status = "okay";
 };
 
+/* --- Flash 分区 ---------------------------------------------------------
+ *
+ * 这张表不是“改二进制”，只是声明各段落在 Flash 的哪个位置，
+ * 由 Zephyr 编译进固件。生效方式有两条：
+ *   1) chosen 里的 zephyr,code-partition + CONFIG_USE_DT_CODE_PARTITION=y
+ *      -> 决定应用链接到哪、最大能有多大
+ *   2) storage_partition -> ZMK 用它存蓝牙配对与设置（NVS）
+ *
+ * 板上 bootloader 是 Adafruit nRF52 bootloader，它把 bootloader 自身与
+ * S140 软设备放在 0x26000 以下，所以应用必须从 0x26000 开始 —— 地址与
+ * ZMK 官方 nice_nano_v2（同为 nRF52840）完全一致。
+ *
+ * 本次只声明应用区与设置区，Flash 顶端留给 bootloader 自己管理。
+ */
 &flash0 {
-	/*
-	 * Adafruit nRF52 UF2 bootloader layout: the bootloader and the S140
-	 * SoftDevice live below 0x26000, so the application is linked at 0x26000.
-	 * These are the same addresses ZMK uses for nice_nano_v2.  The top of the
-	 * flash is left to the bootloader, so the settings partition only claims
-	 * the space it needs.
-	 */
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
 
+		/* 软设备区占位：0x00000 起，长 0x26000（152 KB）。
+		 * 实际内容由 bootloader 烧入，固件只是不越界。 */
 		sd_partition: partition@0 {
 			reg = <0x00000000 0x00026000>;
 		};
+
+		/* 应用区：0x26000 起，长 0xC6000（约 792 KB）。
+		 * 结束于 0xEC000。 */
 		code_partition: partition@26000 {
 			reg = <0x00026000 0x000c6000>;
 		};
+
+		/* 设置存储区：0xEC000 起，长 0x14000（80 KB）。
+		 * ZMK 把蓝牙配对、键位覆盖等存这里；擦除它会恢复出厂状态。 */
 		storage_partition: partition@ec000 {
 			reg = <0x000ec000 0x00014000>;
 		};

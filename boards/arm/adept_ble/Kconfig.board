@@ -1,5 +1,11 @@
-# Adept BLE board (EBYTE E73-2G4M08S1C / nRF52833)
+# Adept BLE 板级 Kconfig 选项
 # SPDX-License-Identifier: MIT
+#
+# 这里只声明“本板存在”这个符号。Zephyr 用它确认用户选的板子有效，
+# 也用它把 Kconfig.defconfig 里的默认值挂上去。
+#
+# 注意：不要在 Kconfig.board 里 select SoC 那种 choice 符号，Kconfig 不允许；
+# SoC 的选择放在 adept_ble_defconfig 里直接写 CONFIG_SOC_*=y。
 
 config BOARD_ADEPT_BLE
-	bool "Adept BLE (EBYTE E73-2G4M08S1C / nRF52833)"
+	bool "Adept BLE (EBYTE E73 模块 / nRF52840)"

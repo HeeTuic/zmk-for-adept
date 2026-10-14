@@ -1,3 +1,10 @@
+# 模块声明：把本仓库注册成一个 Zephyr/ZMK 模块
+# SPDX-License-Identifier: MIT
+#
+# board_root: . 的意思是“板级定义在仓库根目录下的 boards/ 里”。
+# 没有这一行，Zephyr 就找不到 boards/arm/adept_ble，构建会报
+# Invalid BOARD（我们在排查过程中确实遇到过）。
+
 build:
   settings:
     board_root: .

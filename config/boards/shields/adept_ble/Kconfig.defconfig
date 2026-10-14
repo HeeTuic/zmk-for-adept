@@ -1,8 +1,13 @@
-# Adept BLE shield defaults
+# Adept BLE shield 默认值
 # SPDX-License-Identifier: MIT
+#
+# 只在选中本 shield 时生效的默认值。
+# 这里只放“必须由 shield 决定”的东西，其余功能开关都写在 adept_ble.conf，
+# 方便在一个文件里通读。
 
 if SHIELD_ADEPT_BLE
 
+# 蓝牙设备名（电脑 / 手机搜索时显示的名字）
 config ZMK_KEYBOARD_NAME
 	default "Adept BLE"
 

@@ -1,14 +1,26 @@
 /*
- * Adept BLE pin control
+ * Adept BLE 引脚控制（pinctrl）
  *
- * GPIO macros use nRF port pins (P0.x -> 0+x, P1.x -> 32+x), not E73 pad numbers.
- * The trackball data line is a single bidirectional pin, so SPI MOSI and MISO
- * share P0.29; P0.02 carries the MOTION interrupt (see adept_ble.overlay).
+ * 这里只描述“外设用哪些引脚”，不含任何逻辑。
+ *
+ * 注意：NRF_PSEL 宏里写的是 nRF 芯片的端口引脚号，不是 E73 模块焊盘号。
+ *   换算：P0.x -> 端口 0，引脚 x      P1.x -> 端口 1，引脚 x（宏里写 32+x）
+ * 例如 P0.31 写成 (0, 31)，P1.13 写成 (1, 13)。
+ *
+ * 轨迹球引脚来源（PCB 网表，E73 焊盘 -> nRF 引脚）：
+ *   焊盘 9  -> P0.31  SCLK
+ *   焊盘 8  -> P0.29  SDIO（唯一的一根双向数据线）
+ *   焊盘 7  -> P0.02  MOTION（数据就绪中断）
+ *   焊盘 6  -> P1.13  NCS（片选，在 adept_ble.overlay 里作为 cs-gpios）
+ *
+ * 因为传感器只有一根双向数据线，所以 MOSI 与 MISO 都接到 P0.29：
+ * 发指令时由主机驱动，读数据时由传感器驱动，同一根线分时复用。
  *
  * SPDX-License-Identifier: MIT
  */
 
 &pinctrl {
+	/* 正常运行时的 SPI1 引脚组合 */
 	spi1_default: spi1_default {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 0, 31)>,
@@ -17,6 +29,8 @@
 		};
 	};
 
+	/* 低功耗模式：同一组引脚，但打开 low-power-enable，
+	 * 让 nRF 在这些引脚上不持续耗电。 */
 	spi1_sleep: spi1_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 0, 31)>,
@@ -26,12 +40,16 @@
 		};
 	};
 
+	/* UART0：nRF52840 的内部资源，本板没有引出实体串口。
+	 * 定义为 ZMK Studio 的 RPC 通道留出位置；实际数据走 USB CDC ACM
+	 * （由 studio-rpc-usb-uart snippet 提供，见 adept_ble.dts 的 usbd 节点）。 */
 	uart0_default: uart0_default {
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 0, 20)>;
 		};
 		group2 {
 			psels = <NRF_PSEL(UART_RX, 0, 22)>;
+			/* 接收脚上拉，避免悬空时收到随机噪声 */
 			bias-pull-up;
 		};
 	};

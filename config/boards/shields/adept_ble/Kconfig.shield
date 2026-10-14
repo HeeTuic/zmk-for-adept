@@ -1,5 +1,12 @@
-# Adept BLE shield
+# Adept BLE shield 的 Kconfig 声明
 # SPDX-License-Identifier: MIT
+#
+# 作用：把“用户在 build.yaml / west 命令里写的 shield 名字”变成一个 Kconfig
+# 符号。ZMK 用它判断本次构建是否包含本 shield。
+#
+# def_bool $(shields_list_contains,adept_ble) 的意思是：
+#   当构建参数里的 shield 列表包含 adept_ble 时，SHIELD_ADEPT_BLE 自动为 y。
+# 注意这里的名字必须与目录名、.dtsi / .overlay / .keymap / .conf 的前缀一致。
 
 config SHIELD_ADEPT_BLE
 	def_bool $(shields_list_contains,adept_ble)

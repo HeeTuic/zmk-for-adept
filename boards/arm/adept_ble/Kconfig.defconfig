@@ -1,18 +1,28 @@
-# Adept BLE board configuration
+# Adept BLE 板级 Kconfig 默认值
 # SPDX-License-Identifier: MIT
+#
+# 本文件在 SoC 的 Kconfig 之后再处理，用来覆盖/补齐板级默认值。
+# 只在 BOARD_ADEPT_BLE 被选中时生效。
+#
+# 为什么有些 config 可以不写类型？因为它们是 Zephyr 已经定义过的符号，
+# 这里只是改默认值；只有“本仓库自己新引入”的符号才必须写类型，否则
+# Kconfig 会报 "defined without a type" 并让构建失败。
 
 if BOARD_ADEPT_BLE
 
+# 板名（Zephyr 内部标识，不带引号）
 config BOARD
 	default "adept_ble"
 
-# nRF52840-QIAA: 1 MB flash, 256 KB RAM.
+# nRF52840-QIAA：1 MB Flash / 256 KB RAM。
+# 这两个值必须与真实芯片一致，否则链接脚本会算错可用空间。
 config FLASH_SIZE
 	default 1024
 
 config SRAM_SIZE
 	default 256
 
+# USB 设备栈被启用时，选用 Nordic 的 USB 驱动。
 if USB_DEVICE_STACK
 
 config USB_NRFX
@@ -20,6 +30,7 @@ config USB_NRFX
 
 endif # USB_DEVICE_STACK
 
+# 蓝牙控制器用 Zephyr 自带的 BT 控制器（nRF 系列用软设备/内置协议栈）。
 config BT_CTLR
 	default BT
 

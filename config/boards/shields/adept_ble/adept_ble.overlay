@@ -56,11 +56,14 @@
 		x-input-code = <INPUT_REL_X>;
 		y-input-code = <INPUT_REL_Y>;
 
-		/* The sensor is mounted rotated a quarter turn clockwise, so swap
-		 * the axes and invert the new X to keep the pointer aligned with
-		 * the ball. */
+		/* 传感器在结构上顺时针旋转了 90 度安装。
+		 * 坐标变换应为 (x, y) -> (-y, x)：先交换 X/Y，再反转新的 Y 轴。
+		 * 若方向仍不对，按下面组合二选一（一次只改一个）：
+		 *   左右反 → 去掉 invert-y，保留 swap-xy
+		 *   上下反 → 把 invert-y 换成 invert-x
+		 *   整体反 180 度 → 保留 swap-xy，同时加 invert-x 与 invert-y */
 		swap-xy;
-		invert-x;
+		invert-y;
 
 		/* Keep the sensor in RUN while ZMK is active; it doubles as a
 		 * wakeup source.  Remove this if battery life matters more. */

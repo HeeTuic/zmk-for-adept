@@ -1,13 +1,17 @@
 /*
- * Adept BLE default keymap
+ * Adept BLE 键位表
  *
- * Four layers.  The trackball reports through the PMW3610 driver's input
- * device, so no sensor-bindings are used here.
+ * 共 4 层。轨迹球的数据由 PMW3610 驱动经 input-listener 上报，
+ * 所以这里不写 sensor-bindings（那是给旋转编码器用的另一套机制）。
  *
- *   layer 0  Buttons   F13..F18, K1 long press switches to Function
- *   layer 1  Mouse     left / middle / right click, Bluetooth profile select
- *   layer 2  Scroll    keys pass through
- *   layer 3  Function  &bt BT_CLR_ALL and &studio_unlock live here
+ * 各层用途：
+ *   第 0 层 Buttons   默认层，K1 长按进第 3 层，K2 按住进第 1 层
+ *   第 1 层 Mouse     鼠标三键 + 蓝牙配置选择
+ *   第 2 层 Scroll    按键透传（轨迹球在该层做滚动，由驱动按层决定）
+ *   第 3 层 Function  蓝牙清除、Studio 解锁
+ *
+ * 每层的绑定数量必须等于 adept_ble.dtsi 里 matrix_transform 的条目数（6），
+ * 顺序按 K1..K6 与 transform 的 RC 顺序一一对应。
  *
  * SPDX-License-Identifier: MIT
  */
@@ -19,7 +23,19 @@
 #include <dt-bindings/zmk/outputs.h>
 
 / {
-	/* K1 tap fires F13, holding it for 200 ms switches to layer 3. */
+	/*
+	 * 自定义“长按切层”行为（hold-tap）：
+	 *   轻按 -> 触发 tap 绑定（F13）
+	 *   按住超过 200ms -> 激活 hold 绑定（切到第 3 层）
+	 *
+	 *   tapping-term-ms  判定长按的时间阈值
+	 *   quick-tap-ms     这段时间内再按一次，仍算轻按（避免连按被误判成长按）
+	 *   flavor           balanced：兼顾“快速连续输入”和“按住不放”两种习惯
+	 *   bindings         依次是 hold 行为、tap 行为
+	 *
+	 * 命名注意：不要用 lt_ 开头。`&lt` 在标记语言里是 "<" 的转义，
+	 * 会让节点引用解析出错，长按会直接失效。
+	 */
 	fn_hold: fn_hold {
 		compatible = "zmk,behavior-hold-tap";
 		#binding-cells = <2>;
@@ -32,6 +48,8 @@
 	keymap {
 		compatible = "zmk,keymap";
 
+		/* 第 0 层：默认层。
+		 * K1 长按进 Function / 轻按 F13；K2 按住进 Mouse。 */
 		buttons_layer: buttons {
 			display-name = "Buttons";
 			bindings = <
@@ -39,6 +57,9 @@
 			>;
 		};
 
+		/* 第 1 层：鼠标层。
+		 * K1 / K2 切换蓝牙配对槽位 0 与 1，K3~K5 是鼠标左/中/右键。
+		 * 该层下轨迹球用于移动指针。 */
 		mouse_layer: mouse {
 			display-name = "Mouse";
 			bindings = <
@@ -46,6 +67,8 @@
 			>;
 		};
 
+		/* 第 2 层：滚动层。
+		 * 前两键透传到下层，其余保持功能键。 */
 		scroll_layer: scroll {
 			display-name = "Scroll";
 			bindings = <
@@ -53,6 +76,11 @@
 			>;
 		};
 
+		/* 第 3 层：功能层（K1 长按进入）。
+		 * K2 = &bt BT_CLR_ALL，一次清除全部 5 个配对槽。
+		 *      换电脑/连不上时按它，再到系统侧删掉旧配对记录后重新配对。
+		 * K3 = &studio_unlock，解锁 ZMK Studio 后才能改键。
+		 *      解锁状态会保持一段时间，断开连接后自动重新锁定。 */
 		function_layer: function {
 			display-name = "Function";
 			bindings = <
