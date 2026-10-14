@@ -56,14 +56,17 @@
 		x-input-code = <INPUT_REL_X>;
 		y-input-code = <INPUT_REL_Y>;
 
-		/* 传感器在结构上顺时针旋转了 90 度安装。
-		 * 坐标变换应为 (x, y) -> (-y, x)：先交换 X/Y，再反转新的 Y 轴。
-		 * 若方向仍不对，按下面组合二选一（一次只改一个）：
-		 *   左右反 → 去掉 invert-y，保留 swap-xy
-		 *   上下反 → 把 invert-y 换成 invert-x
-		 *   整体反 180 度 → 保留 swap-xy，同时加 invert-x 与 invert-y */
+		/* 传感器在结构上旋转了 90 度安装，坐标需要交换 X/Y。
+		 * 当前组合：swap-xy（不额外反转）=> (x, y) -> (y, x)
+		 *
+		 * 两个轴的方向由这两个属性组合决定，一次只改一个：
+		 *   只 swap-xy                => (x, y) -> (y,  x)
+		 *   swap-xy + invert-x        => (x, y) -> (y, -x)
+		 *   swap-xy + invert-y        => (x, y) -> (-y, x)
+		 *   swap-xy + invert-x + invert-y => 整体反向 180 度
+		 *   只 invert-x（不 swap）    => (x, y) -> (x, -y)
+		 */
 		swap-xy;
-		invert-y;
 
 		/* Keep the sensor in RUN while ZMK is active; it doubles as a
 		 * wakeup source.  Remove this if battery life matters more. */
