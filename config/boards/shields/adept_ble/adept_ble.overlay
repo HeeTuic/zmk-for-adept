@@ -1,13 +1,20 @@
 /*
- * Adept BLE: PMW3610 trackball bus and device.
+ * Adept BLE: PMW3610 trackball.
  *
- * SCLK P0.31, CS P1.13, MOTION (interrupt) P0.02.  The sensor has a single
- * bidirectional data pin, so SPI MOSI and MISO both use P0.29.
+ * Pin assignment taken from the PCB netlist:
+ *   SCLK   E73 pad 9 -> P0.31
+ *   SDIO   E73 pad 8 -> P0.29   (bidirectional data)
+ *   MOTION E73 pad 7 -> P0.02   (data-ready interrupt)
+ *   NCS    E73 pad 6 -> P1.13
+ *
+ * The sensor has a single bidirectional data line, so SPI MOSI and MISO share
+ * P0.29, which is how the reference driver is configured as well.
  *
  * SPDX-License-Identifier: MIT
  */
 
 #include "adept_ble.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 &pinctrl {
 	spi1_default: spi1_default {
@@ -39,13 +46,18 @@
 
 	trackball: trackball@0 {
 		status = "okay";
-		compatible = "pixart,pmw3610";
+		compatible = "pixart,pmw3610-alt";
 		reg = <0>;
 		spi-max-frequency = <2000000>;
 		irq-gpios = <&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 
-		/* Keymap layers: 2 = scroll, 3 = snipe. */
-		scroll-layers = <2>;
-		snipe-layers = <3>;
+		cpi = <600>;
+		evt-type = <INPUT_EV_REL>;
+		x-input-code = <INPUT_REL_X>;
+		y-input-code = <INPUT_REL_Y>;
+
+		/* Keep the sensor in RUN while ZMK is active; it doubles as a
+		 * wakeup source.  Remove this if battery life matters more. */
+		force-awake;
 	};
 };

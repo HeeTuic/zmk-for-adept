@@ -1,13 +1,13 @@
 /*
  * Adept BLE board
  *
- * MCU module: EBYTE E73-2G4M08S1C (nRF52833-QIAA, 512 KB flash / 128 KB RAM)
+ * MCU module: EBYTE E73 (nRF52840, 1 MB flash / 256 KB RAM)
  *
  * SPDX-License-Identifier: MIT
  */
 
 /dts-v1/;
-#include <nordic/nrf52833_qiaa.dtsi>
+#include <nordic/nrf52840_qiaa.dtsi>
 #include "adept_ble-pinctrl.dtsi"
 
 / {
@@ -84,9 +84,11 @@ zephyr_udc0: &usbd {
 
 &flash0 {
 	/*
-	 * Adafruit nRF52 UF2 bootloader layout: the bootloader plus the S140
-	 * SoftDevice occupy flash below 0x26000, so the application must be
-	 * linked at 0x26000.  Storage sits at the top of the 512 KB flash.
+	 * Adafruit nRF52 UF2 bootloader layout: the bootloader and the S140
+	 * SoftDevice live below 0x26000, so the application is linked at 0x26000.
+	 * These are the same addresses ZMK uses for nice_nano_v2.  The top of the
+	 * flash is left to the bootloader, so the settings partition only claims
+	 * the space it needs.
 	 */
 	partitions {
 		compatible = "fixed-partitions";

@@ -6,12 +6,12 @@ if BOARD_ADEPT_BLE
 config BOARD
 	default "adept_ble"
 
-# nRF52833-QIAA: 512 KB flash, 128 KB RAM.
+# nRF52840-QIAA: 1 MB flash, 256 KB RAM.
 config FLASH_SIZE
-	default 512
+	default 1024
 
 config SRAM_SIZE
-	default 128
+	default 256
 
 if USB_DEVICE_STACK
 

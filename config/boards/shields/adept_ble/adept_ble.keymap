@@ -1,9 +1,8 @@
 /*
  * Adept BLE default keymap
  *
- * The trackball mode is driven by the PMW3610 driver through the active layer
- * (see scroll-layers / snipe-layers in adept_ble.overlay), so no
- * sensor-bindings are used here.
+ * The trackball reports through the PMW3610 driver's input device and the
+ * input-listener in adept_ble.dtsi, so no sensor-bindings are used here.
  *
  * SPDX-License-Identifier: MIT
  */
