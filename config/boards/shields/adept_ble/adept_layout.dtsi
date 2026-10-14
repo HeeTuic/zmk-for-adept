@@ -4,8 +4,16 @@
  * 作用：给 Studio 与画键位图工具一个“按键在板子上的位置”描述。
  * 不影响按键功能，错了也只是显示位置不准。
  *
- * 坐标单位 1/100 英寸（mil 的 1/10），X 向右、Y 向下，
- * 数值取自 PCB 元件坐标，只保证相对关系正确。
+ * 坐标单位：1 单位 = 100（ZMK 惯用 1/100 英寸），X 向右、Y 向下。
+ * 布局来源：由键盘布局编辑器导出的 KLE 坐标换算而来。
+ *
+ *   KLE 原始数据：
+ *     上排 4 键 (y=0)：
+ *       x0 h1.4 | x1 h1.2 | x2 h1.2 | x3 h1.4
+ *     下方 2 个拇指大键 (y=2.75, w1.5, h1.7)：
+ *       x0 (0~1.5) | x2.5 (2.5~4)
+ *
+ *   换算规则：X = x*100，Y = y*100，宽 = w*100，高 = h*100
  *
  * 必须 #include <physical_layouts.dtsi>（尖括号 = 取 ZMK 官方那份），
  * 因为 &key_physical_attrs 这个标签由官方定义。若在 shield 目录下放一个
@@ -24,12 +32,14 @@
 		display-name = "Adept BLE";
 
 		keys  //                     w   h    x    y   rot  rx  ry
-			= <&key_physical_attrs 100 100  582  284    0   0   0>   /* K1 */
-			, <&key_physical_attrs 100 100  621  106    0   0   0>   /* K2 */
-			, <&key_physical_attrs 100 100 1088  285    0   0   0>   /* K3 */
-			, <&key_physical_attrs 100 100 1090  250    0   0   0>   /* K4 */
-			, <&key_physical_attrs 100 100 2195  250    0   0   0>   /* K5 */
-			, <&key_physical_attrs 100 100 2702  281    0   0   0>   /* K6 */
+			/* 上排 4 键 */
+			= <&key_physical_attrs 100 140    0    0    0   0   0>   /* K1 */
+			, <&key_physical_attrs 100 120  100    0    0   0   0>   /* K2 */
+			, <&key_physical_attrs 100 120  200    0    0   0   0>   /* K3 */
+			, <&key_physical_attrs 100 140  300    0    0   0   0>   /* K4 */
+			/* 下方 2 个拇指键（宽高更大，左右对称居中） */
+			, <&key_physical_attrs 150 170    0  275    0   0   0>   /* K5 */
+			, <&key_physical_attrs 150 170  250  275    0   0   0>   /* K6 */
 			;
 	};
 };

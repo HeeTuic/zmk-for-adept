@@ -4,11 +4,15 @@
  * 共 4 层。轨迹球的数据由 PMW3610 驱动经 input-listener 上报，
  * 所以这里不写 sensor-bindings（那是给旋转编码器用的另一套机制）。
  *
+ * 物理排布（与 adept_layout.dtsi 一致）：
+ *   上排 4 键：K1 K2 K3 K4
+ *   下方 2 键：K5(左) K6(右)
+ *
  * 各层用途：
- *   第 0 层 Buttons   默认层，K1 长按进第 3 层，K2 按住进第 1 层
+ *   第 0 层 Buttons   默认层，出厂键位见下
  *   第 1 层 Mouse     鼠标三键 + 蓝牙配置选择
- *   第 2 层 Scroll    按键透传（轨迹球在该层做滚动，由驱动按层决定）
- *   第 3 层 Function  蓝牙清除、Studio 解锁
+ *   第 2 层 Scroll    按键透传
+ *   第 3 层 Function  蓝牙清除、Studio 解锁（K1 长按进入）
  *
  * 每层的绑定数量必须等于 adept_ble.dtsi 里 matrix_transform 的条目数（6），
  * 顺序按 K1..K6 与 transform 的 RC 顺序一一对应。
@@ -48,12 +52,18 @@
 	keymap {
 		compatible = "zmk,keymap";
 
-		/* 第 0 层：默认层。
-		 * K1 长按进 Function / 轻按 F13；K2 按住进 Mouse。 */
+		/* 第 0 层：默认层，出厂键位
+		 *   K1 = 轻按 F13 / 长按进第 3 层
+		 *   K2 = F14（按住进第 1 层鼠标层）
+		 *   K3 = F15
+		 *   K4 = F16
+		 *   K5 = F18（左下）
+		 *   K6 = F17（右下）
+		 */
 		buttons_layer: buttons {
 			display-name = "Buttons";
 			bindings = <
-				&fn_hold 3 F13  &mo 1  &kp F15  &kp F16  &kp F17  &kp F18
+				&fn_hold 3 F13  &mo 1  &kp F15  &kp F16  &kp F18  &kp F17
 			>;
 		};
 
@@ -63,7 +73,7 @@
 		mouse_layer: mouse {
 			display-name = "Mouse";
 			bindings = <
-				&bt BT_SEL 0  &bt BT_SEL 1  &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F18
+				&bt BT_SEL 0  &bt BT_SEL 1  &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F17
 			>;
 		};
 
@@ -72,7 +82,7 @@
 		scroll_layer: scroll {
 			display-name = "Scroll";
 			bindings = <
-				&trans  &trans  &kp F15  &kp F16  &kp F17  &kp F18
+				&trans  &trans  &kp F15  &kp F16  &kp F18  &kp F17
 			>;
 		};
 
@@ -84,7 +94,7 @@
 		function_layer: function {
 			display-name = "Function";
 			bindings = <
-				&trans  &bt BT_CLR_ALL  &studio_unlock  &kp F16  &kp F17  &kp F18
+				&trans  &bt BT_CLR_ALL  &studio_unlock  &kp F16  &kp F18  &kp F17
 			>;
 		};
 	};
