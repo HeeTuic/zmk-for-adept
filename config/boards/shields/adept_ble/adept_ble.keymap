@@ -1,8 +1,13 @@
 /*
  * Adept BLE default keymap
  *
- * The trackball reports through the PMW3610 driver's input device and the
- * input-listener in adept_ble.dtsi, so no sensor-bindings are used here.
+ * Four layers.  The trackball reports through the PMW3610 driver's input
+ * device, so no sensor-bindings are used here.
+ *
+ *   layer 0  Buttons   F13..F18, K1 long press switches to Function
+ *   layer 1  Mouse     left / middle / right click, Bluetooth profile select
+ *   layer 2  Scroll    keys pass through
+ *   layer 3  Function  &bt BT_CLR_ALL and &studio_unlock live here
  *
  * SPDX-License-Identifier: MIT
  */
@@ -14,34 +19,44 @@
 #include <dt-bindings/zmk/outputs.h>
 
 / {
+	/* K1 tap fires F13, holding it for 200 ms switches to layer 3. */
+	fn_hold: fn_hold {
+		compatible = "zmk,behavior-hold-tap";
+		#binding-cells = <2>;
+		tapping-term-ms = <200>;
+		quick-tap-ms = <150>;
+		flavor = "balanced";
+		bindings = <&mo>, <&kp>;
+	};
+
 	keymap {
 		compatible = "zmk,keymap";
 
 		buttons_layer: buttons {
 			display-name = "Buttons";
 			bindings = <
-				&kp F13  &kp F14  &kp F15  &kp F16  &kp F17  &kp F18
+				&fn_hold 3 F13  &mo 1  &kp F15  &kp F16  &kp F17  &kp F18
 			>;
 		};
 
-		lower_layer: lower {
-			display-name = "Lower";
+		mouse_layer: mouse {
+			display-name = "Mouse";
 			bindings = <
-				&mo 2    &mo 3    &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F18
+				&bt BT_SEL 0  &bt BT_SEL 1  &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F18
 			>;
 		};
 
 		scroll_layer: scroll {
 			display-name = "Scroll";
 			bindings = <
-				&trans   &trans   &kp F15  &kp F16  &kp F17  &kp F18
+				&trans  &trans  &kp F15  &kp F16  &kp F17  &kp F18
 			>;
 		};
 
-		snipe_layer: snipe {
-			display-name = "Snipe";
+		function_layer: function {
+			display-name = "Function";
 			bindings = <
-				&trans   &trans   &kp F15  &kp F16  &kp F17  &kp F18
+				&trans  &bt BT_CLR_ALL  &studio_unlock  &kp F16  &kp F17  &kp F18
 			>;
 		};
 	};

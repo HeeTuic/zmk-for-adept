@@ -1,10 +1,10 @@
 # This file generates the GitHub Actions matrix.
 #
-# The zmk-usb-logging snippet adds the USB CDC ACM console used for the
-# serial debug output.  Remove it once the hardware is confirmed working.
+# The studio-rpc-usb-uart snippet provides the CDC ACM port ZMK Studio talks
+# to over USB.
 ---
 include:
   - board: adept_ble
     shield: adept_ble
-    snippet: zmk-usb-logging
+    snippet: studio-rpc-usb-uart
     artifact-name: adept_ble
