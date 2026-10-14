@@ -56,6 +56,12 @@
 		x-input-code = <INPUT_REL_X>;
 		y-input-code = <INPUT_REL_Y>;
 
+		/* The sensor is mounted rotated a quarter turn clockwise, so swap
+		 * the axes and invert the new X to keep the pointer aligned with
+		 * the ball. */
+		swap-xy;
+		invert-x;
+
 		/* Keep the sensor in RUN while ZMK is active; it doubles as a
 		 * wakeup source.  Remove this if battery life matters more. */
 		force-awake;
