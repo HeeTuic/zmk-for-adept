@@ -65,13 +65,49 @@
 	};
 
 	/*
-	 * 轨迹球数据入口：PMW3610 驱动上报标准 input 事件，
-	 * 由 input-listener 接进 ZMK 的指针处理流程，
-	 * 最终根据当前激活层决定是移动指针还是滚动。
+	 * 轨迹球数据入口。
+	 *
+	 * PMW3610 驱动上报标准 input 事件，由本监听器接进 ZMK 的指针处理流程。
+	 * 正常情况下这些事件被当作指针位移发送给主机；
+	 * 当第 1 层（滚动层）被激活时，下面的 scroller 覆盖节点会改用
+	 * &zip_xy_to_scroll_mapper，把 X/Y 位移转成滚轮 / 横向滚轮事件。
+	 *
+	 * 覆盖节点的规则（官方文档 keymaps/input-processors/usage）：
+	 *   - layers 列出的层「也在激活集合里」时，该覆盖生效
+	 *   - 默认第一个匹配的覆盖生效后，就不再走基础处理器（父节点的）
+	 *   - 因为 &tog 1 / &mo 1 只是额外激活第 1 层，第 0 层仍然激活，
+	 *     所以滚动模式下六个按键照常可用
 	 */
 	trackball_listener {
 		compatible = "zmk,input-listener";
 		device = <&trackball>;
+
+		scroller {
+			layers = <1>;
+			input-processors = <&zip_xy_to_scroll_mapper>;
+		};
+	};
+
+	/*
+	 * 组合键：同时按住「中左小键」与「中右小键」进入第 2 层（配置层），
+	 * 松开任意一个即退出，回到默认层。
+	 *
+	 * key-positions 用的是键位索引，从 0 开始，与 keymap 每层绑定顺序一致：
+	 *   0 左上大   1 中左小   2 中右小   3 右上大   4 左下   5 右下
+	 *
+	 * timeout-ms：两个键必须在这个时间内先后按下才算组合。
+	 * require-prior-idle-ms：若在这段时间内刚按过别的键，则不触发组合，
+	 * 避免正常点击时被误判。
+	 */
+	combos {
+		compatible = "zmk,combos";
+
+		combo_config_layer {
+			timeout-ms = <50>;
+			require-prior-idle-ms = <150>;
+			key-positions = <1 2>;
+			bindings = <&mo 2>;
+		};
 	};
 };
 
