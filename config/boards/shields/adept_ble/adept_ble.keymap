@@ -57,13 +57,13 @@
 		 *   K2 = F14（按住进第 1 层鼠标层）
 		 *   K3 = F15
 		 *   K4 = F16
-		 *   K5 = F17（左下）
-		 *   K6 = F18（右下）
+		 *   K5 = F18（左下）
+		 *   K6 = F17（右下）
 		 */
 		buttons_layer: buttons {
 			display-name = "Buttons";
 			bindings = <
-				&fn_hold 3 F13  &mo 1  &kp F15  &kp F16  &kp F17  &kp F18
+				&fn_hold 3 F13  &mo 1  &kp F15  &kp F16  &kp F18  &kp F17
 			>;
 		};
 
@@ -73,7 +73,7 @@
 		mouse_layer: mouse {
 			display-name = "Mouse";
 			bindings = <
-				&bt BT_SEL 0  &bt BT_SEL 1  &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F18
+				&bt BT_SEL 0  &bt BT_SEL 1  &mkp LCLK  &mkp MCLK  &mkp RCLK  &kp F17
 			>;
 		};
 
@@ -82,7 +82,7 @@
 		scroll_layer: scroll {
 			display-name = "Scroll";
 			bindings = <
-				&trans  &trans  &kp F15  &kp F16  &kp F17  &kp F18
+				&trans  &trans  &kp F15  &kp F16  &kp F18  &kp F17
 			>;
 		};
 
@@ -94,7 +94,7 @@
 		function_layer: function {
 			display-name = "Function";
 			bindings = <
-				&trans  &bt BT_CLR_ALL  &studio_unlock  &kp F16  &kp F17  &kp F18
+				&trans  &bt BT_CLR_ALL  &studio_unlock  &kp F16  &kp F18  &kp F17
 			>;
 		};
 	};
