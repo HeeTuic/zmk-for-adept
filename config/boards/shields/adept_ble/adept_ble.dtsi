@@ -28,24 +28,31 @@
 	 *   GPIO_ACTIVE_LOW  —— 按下时被拉到低电平，按“低有效”处理
 	 *   GPIO_PULL_UP     —— 未按时靠内部上拉维持高电平，避免悬空误触发
 	 *
-	 * 下面顺序（K1..K6）必须与 matrix_transform 的 RC 顺序、
-	 * 以及 keymap 里每层的绑定顺序一致，三者对不上就会错键。
+	 * 这里的顺序就是「键位索引 0..5」，必须与下面 matrix_transform 的 RC 顺序、
+	 * adept_layout.dtsi 的 keys 顺序、以及 keymap 每层的绑定顺序完全一致。
 	 *
 	 * 引脚来源（E73 焊盘 -> nRF 引脚）：
-	 *   K1 焊盘 35 -> P0.24    K4 焊盘 4  -> P0.28
-	 *   K2 焊盘 33 -> P0.13    K5 焊盘 3  -> P0.03
-	 *   K3 焊盘 10 -> P0.30    K6 焊盘 1  -> P1.11
+	 *   索引 0 左上大  焊盘 35 -> P0.24
+	 *   索引 1 中左小  焊盘 33 -> P0.13
+	 *   索引 2 中右小  焊盘 10 -> P0.30
+	 *   索引 3 右上大  焊盘 4  -> P0.28
+	 *   索引 4 左下    焊盘 1  -> P1.11
+	 *   索引 5 右下    焊盘 3  -> P0.03
+	 *
+	 * 注意最后两个：物理左下的键接在 P1.11、物理右下的键接在 P0.03，
+	 * 所以这里 P1.11 在前（索引 4 = 左）、P0.03 在后（索引 5 = 右）。
+	 * 若日后发现左右又反了，把这两条对调即可（不要动键值）。
 	 */
 	kscan0: kscan_0 {
 		compatible = "zmk,kscan-gpio-direct";
 
 		input-gpios
-			= <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K1  P0.24 */
-			, <&gpio0 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K2  P0.13 */
-			, <&gpio0 30 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K3  P0.30 */
-			, <&gpio0 28 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K4  P0.28 */
-			, <&gpio0 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K5  P0.03 */
-			, <&gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* K6  P1.11 */
+			= <&gpio0 24 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* 索引0 左上大  P0.24 */
+			, <&gpio0 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* 索引1 中左小  P0.13 */
+			, <&gpio0 30 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* 索引2 中右小  P0.30 */
+			, <&gpio0 28 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* 索引3 右上大  P0.28 */
+			, <&gpio1 11 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* 索引4 左下    P1.11 */
+			, <&gpio0 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* 索引5 右下    P0.03 */
 			;
 	};
 

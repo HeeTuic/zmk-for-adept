@@ -1,14 +1,14 @@
 /*
  * Adept BLE 键位表
  *
- * 布局参照 Ploopy Adept 官方 QMK 默认键位
+ * 出厂键位参照 Ploopy Adept 官方 QMK 默认键位
  * （QMK: keyboards/ploopyco/madromys/keymaps/default/keymap.c）
  *
  *   官方默认： LAYOUT( MS_BTN4, MS_BTN5, DRAG_SCROLL, MS_BTN2, MS_BTN1, MS_BTN3 )
  *   官方物理标签： Top Left Left / Top Left / Top Right / Top Right Right
  *                  / Bottom Left / Bottom Right
  *
- * 键位索引（从 0 开始，与 adept_ble.dtsi 的 matrix_transform 顺序一致）：
+ * 键位索引（从 0 开始，与 adept_ble.dtsi 的 kscan 顺序一一对应）：
  *   0 左上大    1 中左小    2 中右小    3 右上大
  *   4 左下(拇指) 5 右下(拇指)
  *
@@ -35,28 +35,29 @@
 	keymap {
 		compatible = "zmk,keymap";
 
-		/* 第 0 层：默认层（对应官方 Adept 出厂键位）
-		 *   0 左上大   &mkp MB4   后退（官方 MS_BTN4）
-		 *   1 中左小   &mkp MB5   前进（官方 MS_BTN5）
-		 *   2 中右小   &mo 1      按住进入滚动层（对应官方 DRAG_SCROLL）
-		 *   3 右上大   &mkp RCLK  右键（官方 MS_BTN2）
-		 *   4 左下     &mkp LCLK  左键（官方 MS_BTN1）
-		 *   5 右下     &mkp MCLK  中键（官方 MS_BTN3）
+		/* 第 0 层：默认层
+		 *   0 左上大   &mkp MCLK  中键（滚轮按下）
+		 *   1 中左小   &mkp MB5   前进
+		 *   2 中右小   &mo 1      按住进入滚动层
+		 *   3 右上大   &mkp MB4   后退 / 切换程序
+		 *   4 左下     &mkp LCLK  左键
+		 *   5 右下     &mkp RCLK  右键
 		 */
 		buttons_layer: buttons {
 			display-name = "Buttons";
 			bindings = <
-				&mkp MB4  &mkp MB5  &mo 1  &mkp RCLK  &mkp LCLK  &mkp MCLK
+				&mkp MCLK  &mkp MB5  &mo 1  &mkp MB4  &mkp LCLK  &mkp RCLK
 			>;
 		};
 
 		/* 第 1 层：滚动层。
 		 * 轨迹球在该层滚动而不是移动指针（见 adept_ble.dtsi 的 scroller 节点）。
-		 * 按键功能与默认层保持一致，这样滚动时也能随时点击。 */
+		 * 按键功能与默认层保持一致，这样滚动时也能随时点击；
+		 * 中右小键用 &trans 透传，松开即回到第 0 层。 */
 		scroll_layer: scroll {
 			display-name = "Scroll";
 			bindings = <
-				&mkp MB4  &mkp MB5  &trans  &mkp RCLK  &mkp LCLK  &mkp MCLK
+				&mkp MCLK  &mkp MB5  &trans  &mkp MB4  &mkp LCLK  &mkp RCLK
 			>;
 		};
 
@@ -68,7 +69,9 @@
 		 *   4 左下     &bt BT_SEL 0     切换信道 1
 		 *   5 右下     &bt BT_SEL 1     切换信道 2
 		 *
-		 * 本工程只使用 2 个蓝牙信道（ZMK 默认有 5 个，这里只开放前两个）。 */
+		 * 本工程只使用 2 个蓝牙信道（ZMK 默认 5 个，这里只开放前两个）。
+		 * 中键用 &none 而不是 &trans：&trans 会穿透到第 0 层的 &mo 1，
+		 * 松手时会误切滚动层。 */
 		config_layer: config {
 			display-name = "Config";
 			bindings = <
