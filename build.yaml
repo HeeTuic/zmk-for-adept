@@ -11,13 +11,17 @@ include:
     artifact-name: adept_ble
 
   # 出厂设置重置固件：清除闪存里保存的键位、蓝牙配对与各项设置。
-  # 用途：ZMK Studio 改过的键位会覆盖编译进固件的键位（官方行为），
-  #       想让新编译的键位生效，就得先刷这个重置固件清一次。
-  # 刷完后重新刷回上面的正常固件即可。
   #
-  # cmake-args 里追加 reset.conf，用来在这一次构建中关掉 ZMK Studio：
-  # settings_reset shield 不带物理布局，而 Studio 要求必须有，否则编译断言失败。
+  # 用途：ZMK Studio 改过的键位会覆盖编译进固件的键位（官方行为），
+  #       想让新编译的键位生效，先刷这个清一次，再刷回正常固件。
+  #
+  # cmake-args 里直接关掉 ZMK Studio。原因：
+  #   settings_reset 这个官方 shield 不带物理布局，而 ZMK 的
+  #   physical_layouts.c 有编译期断言「Studio 必须有物理布局」，
+  #   主配置开着 Studio 就会断言失败。重置固件不需要改键，关掉即可。
+  # 这里用 -DCONFIG_... 而不是 -DEXTRA_CONF_FILE=...：后者是相对
+  # ZMK 应用目录解析的，指向 config 仓库里的文件会报 File not found。
   - board: adept_ble
     shield: settings_reset
     artifact-name: adept_ble-settings_reset
-    cmake-args: -DEXTRA_CONF_FILE=reset.conf
+    cmake-args: -DCONFIG_ZMK_STUDIO=n
