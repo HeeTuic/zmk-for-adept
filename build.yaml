@@ -4,31 +4,23 @@
 # 会额外启用所有行为（ZMK_BEHAVIORS_KEEP_ALL），这样 Studio 里能改到全部行为。
 ---
 include:
-  # 正常固件：平时用这个
+  # 正常固件：唯一需要刷的固件
   - board: adept_ble
     shield: adept_ble
     snippet: studio-rpc-usb-uart
     artifact-name: adept_ble
 
-  # 出厂设置重置固件：清除闪存里保存的键位、蓝牙配对与各项设置。
-  #
-  # 用途：ZMK Studio 改过的键位会覆盖编译进固件的键位（官方行为），
-  #       想让新编译的键位生效，先刷这个清一次，再刷回正常固件。
-  #
-  # 为什么是这种写法，而不是官方那个 settings_reset shield：
-  #   官方 settings_reset shield 没有真实键位表（只有 &sys_reset 占位），
-  #   并且把蓝牙整个关掉（CONFIG_ZMK_BLE=n）。它是给分体键盘两侧重新配对
-  #   设计的。烧到本板上会产生「每次开机都擦设置 + 反复重启」的效果，
-  #   双击复位抓不住、进不去 bootloader，等于丢掉恢复手段。
-  #
-  #   所以这里保留正常的 adept_ble shield（键位、USB、蓝牙都完整），
-  #   只打开「每次开机擦除设置」这一个开关。清除效果与官方 shield 相同，
-  #   但烧完仍能正常双击复位进 bootloader，安全得多。
-  #
-  # 注意：本固件每次上电都会清一次设置，因此只用于「清一遍」，
-  #       清完请刷回上面的正常固件。
-  - board: adept_ble
-    shield: adept_ble
-    snippet: studio-rpc-usb-uart
-    artifact-name: adept_ble-settings_reset
-    cmake-args: -DCONFIG_ZMK_SETTINGS_RESET_ON_START=y
+# 关于「清除已保存的设置」：
+#
+# 之前这里还构建过一个 settings_reset 固件，那个做法是错的，已移除。
+# 原因：
+#   1) 官方 settings_reset shield 没有真实键位表、并把蓝牙整个关掉，
+#      烧到本板上会陷在「每次开机擦设置 → 重启」的循环里，
+#      双击复位抓不到时间窗，等于丢掉恢复手段。
+#   2) 即使改成「正常 shield + CONFIG_ZMK_SETTINGS_RESET_ON_START=y」，
+#      仍然是每次上电就擦一次，天生带有重启循环风险。
+#
+# 正确做法（不需要专门的固件）：
+#   需要清设置时，用 ZMK Studio 的 "Restore Stock Settings" 功能即可，
+#   它会清除保存的键位，清除后编译进固件的键位重新生效。
+#   蓝牙配对信息则用配置层的 &bt BT_CLR 键清除。
