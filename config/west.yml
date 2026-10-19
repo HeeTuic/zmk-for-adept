@@ -11,6 +11,9 @@ manifest:
     # 轨迹球驱动作者
     - name: badjeff
       url-base: https://github.com/badjeff
+    # LED 状态指示模块作者
+    - name: bluedrink9
+      url-base: https://github.com/BlueDrink9
 
   projects:
     # ZMK 本体。revision 用 tag 可以锁定版本、保证每次编译结果一致。
@@ -23,6 +26,13 @@ manifest:
     # compatible 为 "pixart,pmw3610-alt"，Kconfig 前缀 CONFIG_PMW3610_ALT_*。
     - name: zmk-pmw3610-driver
       remote: badjeff
+      revision: main
+
+    # 单色 LED 状态指示模块。
+    # 用板上一颗普通 GPIO 灯（本板的 blue_led）闪出电量、蓝牙状态与当前层。
+    # 要求设备树里有 aliases 条目 indicator-led（见 board 的 adept_ble.dts）。
+    - name: zmk-poor-mans-led-indicator
+      remote: bluedrink9
       revision: main
 
   self:

@@ -41,6 +41,13 @@
 		};
 	};
 
+	/* 把 blue_led 指定为状态指示灯，供 LED 指示模块使用。
+	 * zmk-poor-mans-led-indicator 通过这个别名找到要闪哪颗灯，
+	 * 缺少该别名时它的 leds.c 里会触发编译期断言。 */
+	aliases {
+		indicator-led = &blue_led;
+	};
+
 	/* 电池电压采样：
 	 * PCB 上 R10 = 820K（上分压）、R11 = 2M（下分压），中点接 E73 焊盘 18
 	 * = P0.04 = AIN2。ZMK 会按分压比换算回真实电池电压。

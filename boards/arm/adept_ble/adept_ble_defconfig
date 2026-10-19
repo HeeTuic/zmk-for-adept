@@ -50,8 +50,9 @@ CONFIG_FLASH_MAP=y
 # --- 低频时钟 --------------------------------------------------------------
 # 模块上已贴 32.768 kHz 晶振（E73 第 11 / 13 脚）。
 # 用晶振而不是内部 RC，蓝牙休眠时的功耗和计时精度都更好。
-CONFIG_CLOCK_CONTROL_NRF=y
-CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
+# 不写 CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL：Zephyr 里这个 choice 的默认值
+# 本来就是 XTAL（drivers/clock_control/Kconfig.nrf），写了只是重复声明。
+# 只在需要改用内部 RC 时才需要显式指定 RC。
 
 # --- 输出方式 --------------------------------------------------------------
 # 蓝牙 + USB 双模；USB 同时承担 ZMK Studio 的串口通道。
