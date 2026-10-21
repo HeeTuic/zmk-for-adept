@@ -64,8 +64,12 @@ zmk-for-adept/
 | 位置 | 左上大 | 中左小 | 中右小 | 右上大 | 左下 | 右下 |
 | --- | --- | --- | --- | --- | --- | --- |
 | **0 Buttons**（默认） | 中键 | 前进 | **按住→滚动** | 后退 | 左键 | 右键 |
-| **1 Scroll**（按住中右小） | 中键 | 前进 | — | 后退 | 左键 | 右键 |
+| **1 Scroll**（按住中右小） | **Ctrl**（缩放用） | 前进 | — | 后退 | 左键 | 右键 |
 | **2 Config**（长按中左+中右） | **清除配对** | — | — | **Studio 解锁** | 蓝牙信道 1 | 蓝牙信道 2 |
+
+滚动层用法：
+- 只按住 **中右小** 滚球 = 普通滚动
+- 再按住 **左上大**（Ctrl）滚球 = **Ctrl + 滚轮**，在浏览器 / CAD / 看图 / Office 里是缩放
 
 出厂键位参照 Ploopy Adept 官方 QMK 默认值：
 `MS_BTN4 / MS_BTN5 / DRAG_SCROLL / MS_BTN2 / MS_BTN1 / MS_BTN3`。
@@ -130,7 +134,7 @@ zmk-for-adept/
 | --- | --- | --- |
 | 指针速度 CPI | 600（可 200 步进） | `adept_ble.overlay` 的 `cpi` |
 | 滚动灵敏度 | 位移缩到 1/8 后转滚轮 | `adept_ble.dtsi` 的 `scroller` |
-| 上报节流 | 15ms（约 66 次/秒） | `adept_ble.conf` 的 `REPORT_INTERVAL_MIN` |
+| 上报节流 | 10ms（约 100 次/秒） | `adept_ble.conf` 的 `REPORT_INTERVAL_MIN` |
 | 连接间隔 | 7.5 ~ 10ms | `adept_ble.conf` |
 | 从机延迟 | 0（低延迟优先） | `adept_ble.conf` |
 | 去抖 | 15ms | `adept_ble.conf` |

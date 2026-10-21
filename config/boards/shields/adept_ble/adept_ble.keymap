@@ -52,12 +52,31 @@
 
 		/* 第 1 层：滚动层。
 		 * 轨迹球在该层滚动而不是移动指针（见 adept_ble.dtsi 的 scroller 节点）。
-		 * 按键功能与默认层保持一致，这样滚动时也能随时点击；
-		 * 中右小键用 &trans 透传，松开即回到第 0 层。 */
+		 *
+		 *   0 左上大   &kp LCTRL  按住 = Ctrl 修饰键，用于「Ctrl + 滚轮」缩放
+		 *   1 中左小   &mkp MB5   前进
+		 *   2 中右小   &trans     透传：它就是按住进入本层的键，松开自动回第 0 层
+		 *   3 右上大   &mkp MB4   后退
+		 *   4 左下     &mkp LCLK  左键
+		 *   5 右下     &mkp RCLK  右键
+		 *
+		 * 为什么把左上大键改成 Ctrl：
+		 *   很多软件（浏览器、CAD、看图、Office）的缩放是 Ctrl + 滚轮，
+		 *   单纯滚轮只会滚动画面。而 ZMK 的 input-processor 无法在滚动时
+		 *   自动加修饰键（behaviors 处理器只响应按键类事件，不响应位移），
+		 *   所以只能提供一个 Ctrl 键，由用户按住后滚动。
+		 *
+		 *   选左上大键的理由：本层的 中左小 / 中右小 两键同时按下是进入配置层
+		 *   的组合键，不能占用；剩下四个键里，中键（滚轮按下）在滚动场景中
+		 *   最不常用，牺牲它的影响最小。左中右三个点击键全部保留，
+		 *   所以滚动时仍可正常点选、拖拽。
+		 *
+		 * 用法：按住中右小键进入滚动 → 再按住左上大键 → 滚球即缩放；
+		 *       若只想普通滚动，不要按左上大键即可。 */
 		scroll_layer: scroll {
 			display-name = "Scroll";
 			bindings = <
-				&mkp MCLK  &mkp MB5  &trans  &mkp MB4  &mkp LCLK  &mkp RCLK
+				&kp LCTRL  &mkp MB5  &trans  &mkp MB4  &mkp LCLK  &mkp RCLK
 			>;
 		};
 
