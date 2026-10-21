@@ -31,7 +31,8 @@
 	};
 
 	/* 状态指示灯：蓝灯接在 P1.10，经 1K 电阻到 LED 正极。
-	 * 低电平点亮，所以写 GPIO_ACTIVE_LOW。 */
+	 * 低电平点亮，所以写 GPIO_ACTIVE_LOW。
+	 * 目前没有指示逻辑使用它，固件不会主动驱动，保持常灭。 */
 	leds {
 		compatible = "gpio-leds";
 
@@ -39,13 +40,6 @@
 			gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
 			label = "Blue LED";
 		};
-	};
-
-	/* 把 blue_led 指定为状态指示灯，供 LED 指示模块使用。
-	 * zmk-poor-mans-led-indicator 通过这个别名找到要闪哪颗灯，
-	 * 缺少该别名时它的 leds.c 里会触发编译期断言。 */
-	aliases {
-		indicator-led = &blue_led;
 	};
 
 	/* 电池电压采样：

@@ -82,8 +82,18 @@
 	 * 覆盖节点的规则（官方文档 keymaps/input-processors/usage）：
 	 *   - layers 列出的层「也在激活集合里」时，该覆盖生效
 	 *   - 默认第一个匹配的覆盖生效后，就不再走基础处理器（父节点的）
-	 *   - 因为 &tog 1 / &mo 1 只是额外激活第 1 层，第 0 层仍然激活，
+	 *   - 因为 &mo 1 只是额外激活第 1 层，第 0 层仍然激活，
 	 *     所以滚动模式下六个按键照常可用
+	 *
+	 * 滚动灵敏度：&zip_xy_to_scroll_mapper 是 1:1 把每个位移单位换成
+	 * 一格滚轮，直接用它「轻轻一动就翻整页」。所以在它前面先串一个
+	 * &zip_xy_scaler 1 8，把位移缩小到 1/8 再转成滚轮。
+	 *   - 参数是「乘数 除数」，1 8 即 (值 * 1) / 8
+	 *   - 该处理器带 track-remainders，不足 1 的余数会累积到下次，
+	 *     所以慢速滚动不会丢位移，只是需要多滚一点才滚一格
+	 *   - 除数上限 16（官方为避免整数溢出给的限制）。若 1/8 仍偏快，
+	 *     改为 1 16；若还偏快，可在 mapper 之后再串
+	 *     &zip_scroll_scaler 1 4（两级合计 1/64）
 	 */
 	trackball_listener {
 		compatible = "zmk,input-listener";
@@ -91,7 +101,7 @@
 
 		scroller {
 			layers = <1>;
-			input-processors = <&zip_xy_to_scroll_mapper>;
+			input-processors = <&zip_xy_scaler 1 8>, <&zip_xy_to_scroll_mapper>;
 		};
 	};
 
